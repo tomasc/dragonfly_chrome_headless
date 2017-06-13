@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Tomáš Celizna"]
   spec.email         = ["mail@tomascelizna.com"]
 
-  spec.summary       = %q{Use Headless Chrome to generate PDF}
+  spec.summary       = %q{Uses Headless Chrome to generate PDF from HTML}
   spec.homepage      = "https://github.com/tomasc/dragonfly_chrome_headless"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
