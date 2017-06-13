@@ -9,6 +9,8 @@ module DragonflyChromeHeadless
         raise UnsupportedFormat unless %w(pdf).include?(format.to_s)
 
         node_command = content.env.fetch(:node_command, 'node')
+        options[:host] ||= content.env[:host]
+        options[:port] ||= content.env[:port]
 
         content.shell_update(ext: format) do |old_path, new_path|
           "#{node_command} #{rasterize_script} #{old_path} #{new_path} '#{options.to_json}'"
