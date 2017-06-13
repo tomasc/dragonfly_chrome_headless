@@ -16,7 +16,9 @@ if (args[2]) {
 
 options.port = 9222;
 
-console.log(options);
+if (options.timeout === undefined) {
+  options.timeout = 1;
+}
 
 // htmlPdf.create(html, options).then((pdf) => pdf.toFile(filename));
 
@@ -56,9 +58,13 @@ function generate(html, options) {
           yield Page.enable(); // Enable Page events
           var url = html.toLowerCase().startsWith('http')
             ? html
-            : `data:text/html,${html}`;
+            : `data:text/html,${fs.readFileSync(html)}`;
           yield Page.navigate({url});
           yield Page.loadEventFired();
+          yield new Promise(resolve => {
+            setTimeout(() => { resolve() }, options.timeout);
+          })
+
           // https://chromedevtools.github.io/debugger-protocol-viewer/tot/Page/#method-printToPDF
           const pdf = yield Page.printToPDF(options.printOptions);
           return resolve(pdf.data);
