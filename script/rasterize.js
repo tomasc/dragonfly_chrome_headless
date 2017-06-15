@@ -1,7 +1,7 @@
 // extracted from https://github.com/westy92/html-pdf-chrome
 
 const fs = require("fs");
-const CDP = require('/usr/local/lib/node_modules/chrome-remote-interface');
+const CDP = require('chrome-remote-interface');
 // const htmlPdf = require('/usr/local/lib/node_modules/html-pdf-chrome');
 
 const args = process.argv.slice(2);
