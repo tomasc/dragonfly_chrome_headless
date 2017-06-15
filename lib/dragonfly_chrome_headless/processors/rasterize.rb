@@ -12,6 +12,8 @@ module DragonflyChromeHeadless
         options[:host] ||= content.env[:host]
         options[:port] ||= content.env[:port]
 
+        options = options.reject{ |_, v| v.nil? }
+
         content.shell_update(ext: format) do |old_path, new_path|
           "#{node_command} #{rasterize_script} #{old_path} #{new_path} '#{options.to_json}'"
         end

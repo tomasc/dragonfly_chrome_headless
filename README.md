@@ -2,10 +2,9 @@
 
 Use headless Chrome to generate PDFs out of HTML.
 
-## Prerequisites
+## Requirements
 
 * nodejs
-* headless chrome running on a port (by default 9222)
 
 ## Installation
 
@@ -32,6 +31,13 @@ Dragonfly.app.configure do
   plugin :chrome_headless
 end
 ```
+
+Eventually include host & port, if you are running Chrome in something like a Docker container (recommended, see for example [justinribeiro/chrome-headless](https://hub.docker.com/r/justinribeiro/chrome-headless/)):
+
+```ruby
+Dragonfly.app.configure do
+  plugin :chrome_headless, host: 'chrome_headless', port: '9222'
+end
 
 ## Development
 
