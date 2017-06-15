@@ -6,7 +6,6 @@ Use headless Chrome to generate PDFs out of HTML.
 
 * nodejs
 * headless chrome running on a port (by default 9222)
-* `npm install --global chrome-remote-interface`
 
 ## Installation
 
