@@ -40,6 +40,7 @@ Eventually include host & port, if you are running Chrome in something like a Do
 Dragonfly.app.configure do
   plugin :chrome_headless, host: 'chrome_headless', port: '9222'
 end
+```
 
 ## Development
 
