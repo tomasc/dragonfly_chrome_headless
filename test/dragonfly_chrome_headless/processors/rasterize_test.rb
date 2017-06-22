@@ -13,7 +13,7 @@ module DragonflyChromeHeadless
 
       describe 'html' do
         it 'returns PDF' do
-          processor.call(html, :pdf)
+          processor.call(html, :pdf, { host: 'localhost', port: 9222 })
           get_mime_type(html.path).must_include "application/pdf"
           assert is_pdf(html.data)
         end
@@ -24,7 +24,7 @@ module DragonflyChromeHeadless
           obj = '<html><head></head><body>foo</body></html>'
           def obj.original_filename; 'something.html'; end
           html_string.update(obj)
-          processor.call(html_string, :pdf)
+          processor.call(html_string, :pdf, { host: 'localhost', port: 9222 })
           get_mime_type(html_string.path).must_include "application/pdf"
           assert is_pdf(html_string.data)
         end
