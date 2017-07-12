@@ -11,5 +11,8 @@ const html = fs.readFileSync(path, 'utf8');
 
 var options = {};
 if (args[2]) { options = JSON.parse(args[2]); }
+if (options['completionTrigger'] != undefined) {
+  options['completionTrigger'] = eval(options['completionTrigger']);
+}
 
 htmlPdf.create(html, options).then((pdf) => pdf.toFile(filename));

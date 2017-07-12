@@ -25,7 +25,7 @@ npm install chrome-launcher
 
 #### Launch options
 
-```ts
+```js
 {
   // (optional) remote debugging port number to use. If provided port is already busy, launch() will reject
   // Default: an available port is autoselected
@@ -35,12 +35,13 @@ npm install chrome-launcher
   // See all flags here: http://peter.sh/experiments/chromium-command-line-switches/
   // Do note, many flags are set by default: https://github.com/GoogleChrome/lighthouse/blob/master/chrome-launcher/flags.ts
   chromeFlags: Array<string>;
-  
+
   // (optional) Close the Chrome process on `Ctrl-C`
   // Default: true
   handleSIGINT: boolean;
 
   // (optional) Explicit path of intended Chrome binary
+  // If the `LIGHTHOUSE_CHROMIUM_PATH` env variable is set, that will be used
   // By default, any detected Chrome Canary or Chrome (stable) will be launched
   chromePath: string;
 
@@ -51,6 +52,10 @@ npm install chrome-launcher
   // (optional) Starting URL to open the browser with
   // Default: `about:blank`
   startingUrl: string;
+
+  // (optional) Logging level: verbose, info, error, silent
+  // Default: 'info'
+  logLevel: string;
 };
 ```
 
@@ -58,7 +63,7 @@ npm install chrome-launcher
 
 #### `.launch().then(chrome => ...`
 
-```ts
+```js
 // The remote debugging port exposed by the launched chrome
 chrome.port: number;
 
@@ -96,4 +101,23 @@ chromeLauncher.launch({
 }).then(chrome => {
   console.log(`Chrome debugging port running on ${chrome.port}`);
 });
+```
+
+### Continuous Integration
+
+In a CI environment like Travis, Chrome may not be installed. If you want to use `chrome-launcher`, you can install Chrome using Lighthouse's `download-chrome.sh` script:
+
+`curl -L https://raw.githubusercontent.com/GoogleChrome/lighthouse/v2.1.0/lighthouse-core/scripts/download-chrome.sh | bash`
+
+Then in `.travis.yml`, use it like so:
+
+```yaml
+language: node_js
+install:
+  - yarn install
+before_script:
+  - export DISPLAY=:99.0
+  - export LIGHTHOUSE_CHROMIUM_PATH="$(pwd)/chrome-linux/chrome"
+  - sh -e /etc/init.d/xvfb start
+  - curl -L https://raw.githubusercontent.com/GoogleChrome/lighthouse/v2.1.0/lighthouse-core/scripts/download-chrome.sh | bash
 ```

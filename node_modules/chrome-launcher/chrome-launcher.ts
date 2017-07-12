@@ -30,6 +30,7 @@ export interface Options {
   handleSIGINT?: boolean;
   chromePath?: string;
   userDataDir?: string;
+  logLevel?: string;
 }
 
 export interface LaunchedChrome {
@@ -38,7 +39,11 @@ export interface LaunchedChrome {
   kill: () => Promise<{}>;
 }
 
-export interface ModuleOverrides { fs?: typeof fs, rimraf?: typeof rimraf, }
+export interface ModuleOverrides {
+  fs?: typeof fs;
+  rimraf?: typeof rimraf;
+  spawn?: typeof childProcess.spawn;
+}
 
 export async function launch(opts: Options = {}): Promise<LaunchedChrome> {
   opts.handleSIGINT = defaults(opts.handleSIGINT, true);
@@ -71,6 +76,7 @@ export class Launcher {
   private chrome?: childProcess.ChildProcess;
   private fs: typeof fs;
   private rimraf: typeof rimraf;
+  private spawn: typeof childProcess.spawn;
 
   userDataDir?: string;
   port?: number;
@@ -79,6 +85,9 @@ export class Launcher {
   constructor(private opts: Options = {}, moduleOverrides: ModuleOverrides = {}) {
     this.fs = moduleOverrides.fs || fs;
     this.rimraf = moduleOverrides.rimraf || rimraf;
+    this.spawn = moduleOverrides.spawn || spawn;
+
+    log.setLevel(defaults(this.opts.logLevel, 'info'));
 
     // choose the first one (default)
     this.startingUrl = defaults(this.opts.startingUrl, 'about:blank');
@@ -155,11 +164,11 @@ export class Launcher {
       this.chromePath = installations[0];
     }
 
-    this.pid = await this.spawn(this.chromePath);
+    this.pid = await this.spawnProcess(this.chromePath);
     return Promise.resolve();
   }
 
-  private async spawn(execPath: string) {
+  private async spawnProcess(execPath: string) {
     // Typescript is losing track of the return type without the explict typing.
     const spawnPromise: Promise<number> = new Promise(async (resolve) => {
       if (this.chrome) {
@@ -176,7 +185,7 @@ export class Launcher {
         this.port = await getRandomPort();
       }
 
-      const chrome = spawn(
+      const chrome = this.spawn(
           execPath, this.flags, {detached: true, stdio: ['ignore', this.outFile, this.errFile]});
       this.chrome = chrome;
 
@@ -222,7 +231,8 @@ export class Launcher {
     return new Promise((resolve, reject) => {
       let retries = 0;
       let waitStatus = 'Waiting for browser.';
-      (function poll() {
+
+      const poll = () => {
         if (retries === 0) {
           log.log('ChromeLauncher', waitStatus);
         }
@@ -237,11 +247,19 @@ export class Launcher {
             })
             .catch(err => {
               if (retries > 10) {
+                log.error('ChromeLauncher', err.message);
+                const stderr =
+                    this.fs.readFileSync(`${this.userDataDir}/chrome-err.log`, {encoding: 'utf-8'});
+                log.error(
+                    'ChromeLauncher', `Logging contents of ${this.userDataDir}/chrome-err.log`);
+                log.error('ChromeLauncher', stderr);
                 return reject(err);
               }
               delay(launcher.pollInterval).then(poll);
             });
-      })();
+      };
+      poll();
+
     });
   }
 
