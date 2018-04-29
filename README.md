@@ -1,3 +1,6 @@
+**DISCONTINUED: Replaced by [dragonfly_puppeteer](https://github.com/tomasc/dragonfly_puppeteer)**
+
+
 # Dragonfly Chrome Headless
 
 [![Build Status](https://travis-ci.org/tomasc/dragonfly_chrome_headless.svg)](https://travis-ci.org/tomasc/dragonfly_chrome_headless) [![Gem Version](https://badge.fury.io/rb/dragonfly_chrome_headless.svg)](http://badge.fury.io/rb/dragonfly_chrome_headless) [![Coverage Status](https://img.shields.io/coveralls/tomasc/dragonfly_chrome_headless.svg)](https://coveralls.io/r/tomasc/dragonfly_chrome_headless)
